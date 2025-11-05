@@ -2,34 +2,10 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { getMusicList } from "@/lib/notion"
 
-export default function MusicPage() {
-  const songs = [
-    {
-      id: "song-1",
-      title: "回到未来",
-      duration: "3:45",
-      description: "关于时间旅行的数字梦想",
-    },
-    {
-      id: "song-2",
-      title: "像素心碎",
-      duration: "4:12",
-      description: "8位爱情故事",
-    },
-    {
-      id: "song-3",
-      title: "霓虹雨夜",
-      duration: "3:28",
-      description: "赛博朋克回忆录",
-    },
-    {
-      id: "song-4",
-      title: "编码梦想",
-      duration: "4:55",
-      description: "程序员的夜晚",
-    },
-  ]
+export default async function MusicPage() {
+  const songs = await getMusicList()
 
   return (
     <div className="min-h-screen terminal-bg text-green-400 font-mono">
@@ -56,17 +32,17 @@ export default function MusicPage() {
         </div>
 
         <div className="space-y-4">
-          {songs.map((song) => (
-            <Link key={song.id} href={`/music/${song.id}`}>
+          {songs.map((song: any) => (
+            <Link key={song.id} href={`/music/${song.properties.id.rich_text[0].plain_text}`}>
               <div className="group cursor-pointer bg-black/60 border-2 border-green-600 hover:border-cyan-400 p-6 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-400/30">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex-1">
                     <h3 className="text-lg font-bold text-green-400 group-hover:text-cyan-400 transition-colors">
-                      ♪ {song.title}
+                      ♪ {song.properties.title.title[0].plain_text}
                     </h3>
-                    <p className="text-green-300 text-sm mt-1">{song.description}</p>
+                    <p className="text-green-300 text-sm mt-1">{song.properties.description.rich_text[0].plain_text}</p>
                   </div>
-                  <span className="text-green-500 text-sm ml-4">{song.duration}</span>
+                  <span className="text-green-500 text-sm ml-4">{song.properties.duration.rich_text[0].plain_text}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <div className="flex gap-1 h-1">

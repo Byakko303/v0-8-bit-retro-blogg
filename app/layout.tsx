@@ -1,7 +1,8 @@
-import type React from "react"
+import React from "react"
 import type { Metadata } from "next"
 import { JetBrains_Mono, Courier_Prime } from "next/font/google"
 import "./globals.css"
+import "./hacker-theme.scss"
 
 const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin"],
