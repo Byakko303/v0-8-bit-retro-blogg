@@ -16,6 +16,5 @@ export const getMusicList = async () => {
     database_id: databaseId,
   });
   return response.results;
-};,
-})
+};
 
