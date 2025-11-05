@@ -3,6 +3,8 @@ import type { Metadata } from "next"
 import { JetBrains_Mono, Courier_Prime } from "next/font/google"
 import "./globals.css"
 import "./hacker-theme.scss"
+import { ThemeProvider } from "@/components/theme-provider"
+import Navbar from "@/components/navbar"
 
 const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -30,7 +32,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${jetBrainsMono.variable} ${courierPrime.variable} antialiased`}>
-      <body>{children}</body>
+      <body className="terminal-bg">
+        <ThemeProvider attribute="class" defaultTheme="dark">
+          <Navbar />
+          <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
+        </ThemeProvider>
+      </body>
     </html>
   )
 }
