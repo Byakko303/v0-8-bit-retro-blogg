@@ -42,6 +42,44 @@ function Block({ block }: { block: any }) {
         </div>
       )
     }
+    case "divider":
+      return <hr className="border-green-700 my-4" />
+    case "callout": {
+      const rt = block.callout.rich_text || []
+      const icon = block.callout.icon?.emoji || "⚠️"
+      return (
+        <div className="my-3 bg-black/60 border-2 border-green-700 p-3 flex gap-2 items-start">
+          <span className="text-cyan-400">{icon}</span>
+          <div className="text-green-200">{renderRichText(rt)}</div>
+        </div>
+      )
+    }
+    case "toggle": {
+      const rt = block.toggle.rich_text || []
+      const children = block.children || []
+      return (
+        <details className="my-3">
+          <summary className="cursor-pointer text-green-300">{renderRichText(rt)}</summary>
+          <div className="mt-2">
+            {children.map((child: any) => (
+              <Block key={child.id} block={child} />
+            ))}
+          </div>
+        </details>
+      )
+    }
+    case "image": {
+      const img = block.image
+      const url = img?.type === "external" ? img.external.url : img?.file?.url
+      const caption = (img?.caption || []).map((t: any) => t.plain_text).join("")
+      if (!url) return null
+      return (
+        <figure className="my-4 border border-green-700 p-2 bg-black/60">
+          <img src={url} alt={caption || "image"} className="max-w-full h-auto" />
+          {caption && <figcaption className="text-green-500 text-xs mt-1">{caption}</figcaption>}
+        </figure>
+      )
+    }
     default:
       return null
   }

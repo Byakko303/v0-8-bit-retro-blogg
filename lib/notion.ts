@@ -45,16 +45,40 @@ export async function getBlogPostBySlug(slug: string) {
     if (!page) return null;
 
     // Load blocks (with pagination)
-    const blocks: any[] = [];
-    let cursor: string | undefined = undefined;
-    do {
-      const res = await notion.blocks.children.list({
-        block_id: page.id,
-        start_cursor: cursor,
-      });
-      blocks.push(...res.results);
-      cursor = res.has_more ? res.next_cursor ?? undefined : undefined;
-    } while (cursor);
+    const listChildrenAll = async (blockId: string) => {
+      const out: any[] = [];
+      let cursor: string | undefined = undefined;
+      do {
+        const res = await notion.blocks.children.list({
+          block_id: blockId,
+          start_cursor: cursor,
+        });
+        out.push(...res.results);
+        cursor = res.has_more ? res.next_cursor ?? undefined : undefined;
+      } while (cursor);
+      return out;
+    };
+
+    const blocks: any[] = await listChildrenAll(page.id);
+
+    // Attach first-level children for blocks that have children (e.g., toggles, list items)
+    for (const b of blocks) {
+      if ((b as any).has_children) {
+        try {
+          (b as any).children = await listChildrenAll((b as any).id);
+          // Optional: attach second-level for toggle children
+          if (Array.isArray((b as any).children)) {
+            for (const c of (b as any).children) {
+              if ((c as any).has_children) {
+                (c as any).children = await listChildrenAll((c as any).id);
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('fetch child blocks failed', e);
+        }
+      }
+    }
 
     return { page, blocks };
   } catch (error) {
